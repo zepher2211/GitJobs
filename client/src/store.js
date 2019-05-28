@@ -3,60 +3,43 @@ import ReduxThunk from 'redux-thunk'
 //import history from './history'
 
 const initialState = {
-    things: [],
-    currentThing: {}
+    loginForm: {},
+    currentUser: null,
+    isAuth: false
+    
 }
 
 const reducer = (currentState, action) => {
     switch(action.type){
-        case 'ADD_THING':
+        case 'EDIT_EMAIL':
             return { 
                 ...currentState, 
-                things: [ 
-                    ...currentState.things,
-                    action.payload
-                ]
-            }
-        break;
-        case 'EDIT_THING':
-            // setTimeout( () => history.replace('/things'), 0)
-            return { 
-                ...currentState, 
-                things: currentState.things.map( thing => (
-                    thing.id === action.thing.id ? { ...thing, ...action.thing } : thing
-                ))
-            }
-        break;
-        case 'REMOVE_THING':
-            return { 
-                ...currentState, 
-                things: currentState.things.filter( thing => (
-                    thing.id !== action.id
-                ))
-            }
-        break;
-        case 'CHANGE_NAME':
-            return {
-                ...currentState,
-                currentThing: {
-                    ...currentState.currentThing,
-                    name: action.name
+                loginForm: {
+                    ...currentState.loginForm,
+                    email: action.email
                 }
             }
         break;
-        case 'SELECT_THING':
+        case 'EDIT_PASSWORD':
             return { 
                 ...currentState, 
-                currentThing: currentState.things.find( thing => (
-                    thing.id == action.id
-                ))
+                loginForm: {
+                    ...currentState.loginForm,
+                    password: action.password
+                }
             }
         break;
-        case 'STORE_THINGS':
-           return {
-                ...currentState,
-                things: action.things
-           }
+        case 'SET_USER':
+                return { 
+                    ...currentState, 
+                    currentUser: action.user
+                }
+        break;
+        case 'IS_AUTH':
+            return { 
+                ...currentState, 
+                isAuth: action.res
+            }
         break;
     }
     return currentState

@@ -1,16 +1,33 @@
+const User = require('../models/user')
 const express = require('express');
 
 const router = express.Router();
 
 //Lets say the route below is very sensitive and we want only authorized users to have access
+router.get('/authorize', async (req, res, next) => {
+  let user = await User.findByPk(req.user)
+  res.json({
+    user: user
+  })
+})
 
 //Displays information tailored according to the logged in user
-router.get('/profile', (req, res, next) => {
-  //We'll just send back the user details and the token
+router.get('/profile', async (req, res, next) => {
+  let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
+  if (token.startsWith('Bearer ')) {
+    // Remove Bearer from string
+    token = token.slice(7, token.length);
+  }
+
+  //return the user information for display
+  // let user = await User.findByPk(req.user.id, {
+  //   attributes: {exclude: ['password']}
+  // })
+  //console.log(user)
+
   res.json({
-    message : 'You made it to the secure route',
     user : req.user,
-    token : req.query.secret_token
+    token : token
   })
 });
 

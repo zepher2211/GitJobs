@@ -7,30 +7,10 @@ const DBPORT = process.env.DBPORT || 5432
 const sequelize = new Sequelize(`postgres://caryharper@${DBIP}:${DBPORT}/git_jobs_db`);
 'use strict';
 
-
-  // const User = sequelize.define('User', {
-  //   firstName: DataTypes.STRING,
-  //   lastName: DataTypes.STRING,
-  //   email: DataTypes.STRING,
-  //   password: DataTypes.STRING
-  // }, {
-  //   instanceMethods: {
-  //     validPassword: async (password) => {
-  //       const validPass = await argon2.verify(user.password, password)
-  //       console.log(validPass)
-  //     }
-  //   }
-  // });
   class User extends Sequelize.Model {
 
-    // set password(password){
-    //   console.log(password)
-    //   const hash = argon2.hash(password).then((hash) => hash)
-    //   console.log(hash)
-    //   this.setDataValue('password', hash);
-    // }
-
     async validPassword(password){
+      console.log(this.password, password)
       try {
         if (await argon2.verify(this.password, password)) {
           return true
@@ -38,13 +18,14 @@ const sequelize = new Sequelize(`postgres://caryharper@${DBIP}:${DBPORT}/git_job
           return false
         }
       } catch (err) {
-        console.log(this, password)
+        console.log(err)
       }
     }
 
 
   }
   User.init({
+    profileImage: Sequelize.STRING,
     firstName: Sequelize.STRING,
     lastName: Sequelize.STRING,
     email: Sequelize.STRING,
@@ -59,4 +40,7 @@ const sequelize = new Sequelize(`postgres://caryharper@${DBIP}:${DBPORT}/git_job
     const hash = await argon2.hash(user.password);
     user.password = hash
   });
+
+  sequelize.sync()
+  
   module.exports = User;
