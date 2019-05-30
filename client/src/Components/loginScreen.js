@@ -50,12 +50,19 @@ const styles = theme =>   ({
 
 class loginScreen extends React.Component{
 
+    state = {
+
+    }
+
     handleChange = (e) => {
         console.log("changed")
     }
 
     handleSubmit = (e) => {
         e.preventDefault()
+        this.setState({
+            error: null
+        })
         fetch("http://localhost:80/login", {
             method: "POST",
             headers:{
@@ -66,15 +73,32 @@ class loginScreen extends React.Component{
                 password: this.props.loginForm.password,
             })
         })
-        .then(res => res.json())
-        .then(auth => {
-            console.log(auth)
-            localStorage.clear()
-            localStorage.setItem('auth_token', auth.token)
-            this.props.setUser(auth.user)
-            this.props.history.push('/profile')
-        })
-    }
+            .then(async res => {
+                let parsedRes = await res.json()
+                if(res.ok){
+                console.log(parsedRes)
+                localStorage.clear()
+                localStorage.setItem('auth_token', parsedRes.token)
+                this.props.setUser(parsedRes.user)
+                this.props.history.push('/profile')
+                } else {
+                    this.setState({
+                        error: parsedRes.error
+                    })
+                }
+            })
+        // .then(auth => {
+        //     console.log(auth)
+        //     localStorage.clear()
+        //     localStorage.setItem('auth_token', auth.token)
+        //     this.props.setUser(auth.user)
+        //     this.props.history.push('/profile')
+        // })
+        // .catch(error => this.setState({
+        //     error: error
+        // })
+    //     )
+     }
 
     render(){
         const { classes } = this.props;
@@ -115,6 +139,9 @@ class loginScreen extends React.Component{
                             <Typography variant="subtitle2">
                                 Not a User Yet? <Link component={RouterLink} to="/signup">Sign Up!</Link>
                             </Typography>
+                            {this.state.error ? <Typography variant="subtitle2" color="error">
+                                {this.state.error}
+                            </Typography> : null}
                         </form>
                         </Paper>
                     </Grid>   

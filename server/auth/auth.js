@@ -16,7 +16,10 @@ passport.use('signup', new localStrategy({
         let firstName = req.body.firstName
         let lastName = req.body.lastName
         //Save the information provided by the user to the the database
-        const user = await User.create({ profileImage, firstName, lastName, email, password });
+        let user = await User.create({ profileImage, firstName, lastName, email, password });
+        user = await User.findByPk(user.id, {
+          attributes: {exclude: ['password']}
+        })
         //Send the user information to the next middleware
         return done(null, user);
       } catch (error) {
@@ -44,6 +47,7 @@ passport.use('signup', new localStrategy({
       //If the passwords match, it returns a value of true.
       //console.log(user)
       const validate = await user.validPassword(password);
+      console.log(validate)
       if( !validate ){
         return done(null, false, { message : 'Wrong Password'});
       }

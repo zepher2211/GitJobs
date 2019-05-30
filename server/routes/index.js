@@ -7,6 +7,7 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const multer = require("multer");
 const cloudinary = require("cloudinary");
+const fetch = require('node-fetch');
 const cloudinaryStorage = require("multer-storage-cloudinary");
 
 
@@ -30,21 +31,33 @@ router.get('/', function(req, res, next) {
   //eval(pry.it)
 });
 
+router.get('/getjobs', function(req, res, next) {
+  fetch(`https://jobs.github.com/positions.json?page=${req.query.page}`)
+    .then(githubres => githubres.json())
+    .then(data => res.json(data))
+  //eval(pry.it)
+});
+
 //When the user sends a post request to this route, passport authenticates the user based on the
 //middleware created previously
 router.post('/signup', parser.single("image"), (req, res, next) => {
+  console.log(req.body)
   next()
 }, passport.authenticate('signup', { session : false }) , async (req, res, next) => {
+  const token = jwt.sign({ id : req.user.id },'pothers');
+  console.log(token)
   res.json({ 
     message : 'Signup successful',
-    //user : req.user 
+    user : req.user, 
+    token : token
   });
 });
 
 router.post('/login', async (req, res, next) => {
   passport.authenticate('login', async (err, user, info) => {     try {
       if(err || !user){
-        const error = new Error(err, user)
+        //console.log('this is in error')
+        const error = new Error(info.message, user)
         return next(error);
       }
       req.login(user, { session : false }, async (error) => {

@@ -29,7 +29,13 @@ const sequelize = new Sequelize(`postgres://caryharper@${DBIP}:${DBPORT}/git_job
     firstName: Sequelize.STRING,
     lastName: Sequelize.STRING,
     email: Sequelize.STRING,
-    password: Sequelize.STRING
+    password: Sequelize.STRING,
+    yearsOfExperience: Sequelize.INTEGER,
+    isEmployed: Sequelize.BOOLEAN,
+    description: Sequelize.STRING,
+    minSalary: Sequelize.INTEGER,
+    positionType: Sequelize.STRING,
+    technicalSkills: Sequelize.ARRAY(Sequelize.STRING)
   }, {
     sequelize, modelName: "User"
   })

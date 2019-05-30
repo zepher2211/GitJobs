@@ -1,6 +1,7 @@
 import React from 'react';  
 import { connect } from 'react-redux'
 import { Redirect, Route } from 'react-router-dom';
+import { withRouter } from "react-router"
 import { Typography } from '@material-ui/core';
 
 const mapStateToProps = (state) => ({
@@ -37,17 +38,17 @@ class PrivateRoute extends React.PureComponent {
         })
             .then(async res => {
                 if(!res.ok) {
+                    console.log('we were in here')
                     this.props.userAuth(false);
-                    this.setState({
-                        redirect: true
+                    this.props.history.push('/login')
+                } else {
+                    res.json().then(data => {
+                        this.props.setUser(data.user)
+                        this.props.userAuth(true);
                     })
                 }
-                return res.json()
               })
-            .then(data => {
-                this.props.setUser(data.user)
-                this.props.userAuth(true);
-            })
+            
     }
 
     render() {
@@ -79,4 +80,4 @@ class PrivateRoute extends React.PureComponent {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PrivateRoute);  
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PrivateRoute));  

@@ -12,6 +12,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import { connect } from 'react-redux';
 import login from './loginScreen'
 import { Redirect } from 'react-router-dom'
+import { FormGroup } from '@material-ui/core';
 
 // Add the prop values you want to pull from state below:
 const mapStateToProps = (state) => ({
@@ -20,6 +21,11 @@ const mapStateToProps = (state) => ({
 
 // Add the prop methods you want to dispatch to state here:
 const mapDispatchToProps = {
+    setUser: (user) => {
+        return dispatch => {
+            dispatch({ type: 'SET_USER', user: user })
+        }
+    },
 }
 
 const styles = theme =>   ({
@@ -40,7 +46,7 @@ class signUpScreen extends React.Component{
     }
 
     handleChange = (e) => {
-        console.log("changed")
+        
     }
 
     handleSubmit = (e) => {
@@ -51,10 +57,9 @@ class signUpScreen extends React.Component{
           })
             .then( res => res.json())
             .then(data => {
-                console.log(data)
-                this.setState({
-                    redirect: true
-                })
+                localStorage.setItem("auth_token", data.token)
+                this.props.setUser(data.user)
+                this.props.history.push('/quiz')
             })
     }
 
@@ -82,14 +87,16 @@ class signUpScreen extends React.Component{
                                 <InputLabel htmlFor="component-simple" />
                                 <Input type='file' name='image' />
                             </FormControl>
-                            <FormControl >
-                                <InputLabel htmlFor="component-simple" >first name</InputLabel>
-                                <Input type="text"  name="firstName" />
-                            </FormControl>
-                            <FormControl >
-                                <InputLabel htmlFor="component-simple" >last name</InputLabel>
-                                <Input type="text"  name="lastName" />
-                            </FormControl>
+                            <FormGroup>
+                                <FormControl >
+                                    <InputLabel htmlFor="component-simple" >first name</InputLabel>
+                                    <Input type="text"  name="firstName" />
+                                </FormControl>
+                                <FormControl >
+                                    <InputLabel htmlFor="component-simple" >last name</InputLabel>
+                                    <Input type="text"  name="lastName" />
+                                </FormControl>
+                            </FormGroup>
                             <FormControl fullWidth>
                                 <InputLabel htmlFor="component-simple">e-mail</InputLabel>
                                 <Input type="text" name="email" />
