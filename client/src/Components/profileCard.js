@@ -9,6 +9,7 @@ import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux'
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
+import Fuse from 'fuse.js'
 
 const mapStateToProps = (state) => ({
   user: state.currentUser

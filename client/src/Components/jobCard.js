@@ -58,11 +58,13 @@ const styles = theme => ({
 });
 
 function JobCard(props) {
+  console.log(props.user.technicalSkills.length + 1)
 
   const { classes } = props;
 
     const [expanded, setExpanded] = React.useState(false);
     const [apply, setApply] = React.useState(false);
+    console.log(props.user.technicalSkills)
 
   const handleExpandClick = () => {
     if(apply){
@@ -89,6 +91,9 @@ function JobCard(props) {
         <CardContent className={classes.details}>
           <Typography variant="h6">
           {props.position ? props.position : `N/A`}
+          </Typography>
+          <Typography variant="subtitle2" component="p">
+          Match Factor: {props.score ? `${(props.score/(props.user.technicalSkills.length + 1))*100}%` : `N/A`}
           </Typography>
           <Typography variant="subtitle2" component="p">
           {props.company ? props.company : `N/A`} | Location: {props.location ? props.location : `N/A`}

@@ -4,8 +4,18 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Grid from '@material-ui/core/Grid';
 import { Waypoint } from 'react-waypoint'
 import Typography from '@material-ui/core/Typography';
+import { connect } from 'react-redux'
+import Fuse from 'fuse.js'
 
 let i = 1
+
+const mapStateToProps = (state) => ({
+    user: state.currentUser
+  })
+
+const mapDispatchToProps = {
+
+}
 
 const styles = theme => ({
     root: {
@@ -21,7 +31,37 @@ class jobsContainer extends React.Component{
 
     state = {
         loading: true,
-        jobs: []
+        jobs: [],
+        options: {
+            // tokenize: true,
+            keys: ['description', 'title'],
+            threshold: 0.7,
+        }
+    }
+
+    fuse = new Fuse(this.state.jobs, this.state.options)
+
+    scoringFunc = () => {
+        const firstScore = this.state.jobs.map(job => {
+            if(job.type === this.props.user.positionType){
+                job.score = 1
+            } else {
+                job.score = 0
+            }
+            return job
+        })
+        const secondScore = firstScore.map(job => {
+                this.props.user.technicalSkills.forEach(skill => {
+                let skillSearch = this.fuse.search(skill)
+                //console.log(this.fuse.search('Javascript'))
+                if(skillSearch.includes(job)){
+                    job.score = 1 + job.score
+                }
+            })
+            return job 
+        })
+        //console.log(secondScore)
+        return secondScore
     }
 
     componentDidMount = () => {
@@ -31,6 +71,10 @@ class jobsContainer extends React.Component{
     handleCardClick = (e) => {
         console.log(this)
         e.target.style.maxHeight = 'auto'
+    }
+
+    filterBasedOnLanguage = () => {
+        return this.state.jobs.filter(job => job.type === this.props.user.positionType)
     }
 
     fetchMoreJobs  =  () => {
@@ -45,16 +89,20 @@ class jobsContainer extends React.Component{
     }
 
     renderJobs = () => {
-    return this.state.jobs.map(job => {
+        console.log(this.scoringFunc().sort((a, b) => (a.score > b.score) ? -1 : 1))
+    return this.scoringFunc().sort((a, b) => (a.score > b.score) ? -1 : 1).map(job => {
         return(
             <Grid xs={12} item>
-                <JobCard company={job.company} companyLogo={job.company_logo} posted={job.created_at} location={job.location} position={job.title} description={job.description} apply={job.how_to_apply} type={job.type} />
+                <JobCard company={job.company} companyLogo={job.company_logo} posted={job.created_at} location={job.location} position={job.title} description={job.description} apply={job.how_to_apply} type={job.type} score={job.score} />
             </Grid>
         )
     })
     }
 
     render(){
+        this.fuse = new Fuse(this.state.jobs, this.state.options)
+        //console.log(fuse.search("Javascript"))
+        console.log(this.filterBasedOnLanguage())
 
         const { classes } = this.props;
 
@@ -70,4 +118,4 @@ class jobsContainer extends React.Component{
 
 }
 
-export default withStyles(styles)(jobsContainer)
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(jobsContainer))

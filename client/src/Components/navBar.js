@@ -153,7 +153,7 @@ class PrimarySearchAppBar extends React.Component {
             this.handleMenuClose()
             localStorage.clear()
             this.props.setUser(null)
-            this.props.history.push('/')
+            this.props.history.push('/login')
             }
           }>Log Out</MenuItem> : null}
       </Menu>
@@ -202,7 +202,7 @@ class PrimarySearchAppBar extends React.Component {
             <Typography className={classes.title} variant="h6" color="inherit" noWrap>
               GitJobs
             </Typography>
-            <div className={classes.search}>
+             {/* <div className={classes.search}>
               <div className={classes.searchIcon}>
                 <SearchIcon />
               </div>
@@ -213,10 +213,10 @@ class PrimarySearchAppBar extends React.Component {
                   input: classes.inputInput,
                 }}
               />
-            </div>
+            </div> */}
             <div className={classes.grow} />
             <div className={classes.sectionDesktop}>
-              <IconButton color="inherit">
+              {/* <IconButton color="inherit">
                 <Badge badgeContent={4} color="secondary">
                   <MailIcon />
                 </Badge>
@@ -225,7 +225,7 @@ class PrimarySearchAppBar extends React.Component {
                 <Badge badgeContent={17} color="secondary">
                   <NotificationsIcon />
                 </Badge>
-              </IconButton>
+              </IconButton> */}
               <IconButton
                 aria-owns={isMenuOpen ? 'material-appbar' : undefined}
                 aria-haspopup="true"
